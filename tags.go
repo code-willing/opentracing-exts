@@ -41,9 +41,9 @@ func (t RPCTags) Apply(opts *opentracing.StartSpanOptions) {
 		opts,
 		t.PeerAddr,
 		t.PeerHostname,
-		t.PeerIPv4.String(),
-		t.PeerIPv6.String(),
 		t.PeerService,
+		t.PeerIPv4,
+		t.PeerIPv6,
 		t.PeerPort,
 	)
 }
@@ -60,9 +60,9 @@ func SetRPCTags(span opentracing.Span, t RPCTags) {
 		span,
 		t.PeerAddr,
 		t.PeerHostname,
-		t.PeerIPv4.String(),
-		t.PeerIPv6.String(),
 		t.PeerService,
+		t.PeerIPv4,
+		t.PeerIPv6,
 		t.PeerPort,
 	)
 }
@@ -114,9 +114,9 @@ func (t DBTags) Apply(opts *opentracing.StartSpanOptions) {
 		opts,
 		t.PeerAddr,
 		t.PeerHostname,
-		t.PeerIPv4.String(),
-		t.PeerIPv6.String(),
 		t.PeerService,
+		t.PeerIPv4,
+		t.PeerIPv6,
 		t.PeerPort,
 	)
 }
@@ -143,9 +143,9 @@ func SetDBTags(span opentracing.Span, t DBTags) {
 		span,
 		t.PeerAddr,
 		t.PeerHostname,
-		t.PeerIPv4.String(),
-		t.PeerIPv6.String(),
 		t.PeerService,
+		t.PeerIPv4,
+		t.PeerIPv6,
 		t.PeerPort,
 	)
 }
@@ -197,7 +197,7 @@ func SetHTTPTags(span opentracing.Span, t HTTPTags) {
 	}
 }
 
-func applyPeerTags(opts *opentracing.StartSpanOptions, addr, hostname, ipv4, ipv6, service string, port uint16) {
+func applyPeerTags(opts *opentracing.StartSpanOptions, addr, hostname, service string, ipv4, ipv6 net.IP, port uint16) {
 	if opts == nil {
 		return
 	}
@@ -210,11 +210,11 @@ func applyPeerTags(opts *opentracing.StartSpanOptions, addr, hostname, ipv4, ipv
 	if hostname != "" {
 		opts.Tags[string(ext.PeerHostname)] = hostname
 	}
-	if ipv4 != "" {
-		opts.Tags[string(ext.PeerHostIPv4)] = ipv4
+	if ipv4 != nil {
+		opts.Tags[string(ext.PeerHostIPv4)] = ipv4.String()
 	}
-	if ipv6 != "" {
-		opts.Tags[string(ext.PeerHostIPv6)] = ipv6
+	if ipv6 != nil {
+		opts.Tags[string(ext.PeerHostIPv6)] = ipv6.String()
 	}
 	if port > 0 {
 		opts.Tags[string(ext.PeerPort)] = port
@@ -225,7 +225,7 @@ func applyPeerTags(opts *opentracing.StartSpanOptions, addr, hostname, ipv4, ipv
 }
 
 // setPeerTags sets the standard opentracing peer tags on the specified span.
-func setPeerTags(span opentracing.Span, addr, hostname, ipv4, ipv6, service string, port uint16) {
+func setPeerTags(span opentracing.Span, addr, hostname, service string, ipv4, ipv6 net.IP, port uint16) {
 	if span == nil {
 		return
 	}
@@ -235,11 +235,11 @@ func setPeerTags(span opentracing.Span, addr, hostname, ipv4, ipv6, service stri
 	if hostname != "" {
 		ext.PeerHostname.Set(span, hostname)
 	}
-	if ipv4 != "" {
-		ext.PeerHostIPv4.SetString(span, ipv4)
+	if ipv4 != nil {
+		ext.PeerHostIPv4.SetString(span, ipv4.String())
 	}
-	if ipv6 != "" {
-		ext.PeerHostIPv6.Set(span, ipv6)
+	if ipv6 != nil {
+		ext.PeerHostIPv6.Set(span, ipv6.String())
 	}
 	if port > 0 {
 		ext.PeerPort.Set(span, port)
