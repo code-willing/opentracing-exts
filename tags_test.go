@@ -9,7 +9,7 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/opentracing/opentracing-go/mocktracer"
 
-	"github.com/code-willing/trace"
+	otexts "github.com/code-willing/opentracing-exts"
 )
 
 func init() {
@@ -19,11 +19,11 @@ func init() {
 func TestRPCTags_Apply(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.RPCTags
+		tags otexts.RPCTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.RPCTags{
+			tags: otexts.RPCTags{
 				Kind:         ext.SpanKindRPCClientEnum,
 				PeerAddr:     "http://internal.service.io/",
 				PeerHostname: "internal.service.io",
@@ -46,11 +46,11 @@ func TestRPCTags_Apply(t *testing.T) {
 func TestSetRPCTags(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.RPCTags
+		tags otexts.RPCTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.RPCTags{
+			tags: otexts.RPCTags{
 				Kind:         ext.SpanKindRPCClientEnum,
 				PeerAddr:     "http://internal.service.io/",
 				PeerHostname: "internal.service.io",
@@ -64,14 +64,14 @@ func TestSetRPCTags(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.SetRPCTags(span, tc.tags)
+			otexts.SetRPCTags(span, tc.tags)
 			span.Finish()
 			ensureRPCTagsSet(t, tc.tags, span.Tags())
 		})
 	}
 }
 
-func ensureRPCTagsSet(t *testing.T, rpcTags trace.RPCTags, tags map[string]interface{}) {
+func ensureRPCTagsSet(t *testing.T, rpcTags otexts.RPCTags, tags map[string]interface{}) {
 	key := string(ext.SpanKind)
 	kind, ok := tags[key]
 	switch {
@@ -106,11 +106,11 @@ func ensureRPCTagsSet(t *testing.T, rpcTags trace.RPCTags, tags map[string]inter
 func TestDBTags_Apply(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.DBTags
+		tags otexts.DBTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.DBTags{
+			tags: otexts.DBTags{
 				Type:         "sql",
 				Instance:     "test",
 				User:         "test",
@@ -136,11 +136,11 @@ func TestDBTags_Apply(t *testing.T) {
 func TestSetDBTags(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.DBTags
+		tags otexts.DBTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.DBTags{
+			tags: otexts.DBTags{
 				Type:         "sql",
 				Instance:     "test",
 				User:         "test",
@@ -157,14 +157,14 @@ func TestSetDBTags(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.SetDBTags(span, tc.tags)
+			otexts.SetDBTags(span, tc.tags)
 			span.Finish()
 			ensureDBTagsSet(t, tc.tags, span.Tags())
 		})
 	}
 }
 
-func ensureDBTagsSet(t *testing.T, dbTags trace.DBTags, tags map[string]interface{}) {
+func ensureDBTagsSet(t *testing.T, dbTags otexts.DBTags, tags map[string]interface{}) {
 	key := string(ext.DBType)
 	dbType, ok := tags[key]
 	switch {
@@ -232,11 +232,11 @@ func ensureDBTagsSet(t *testing.T, dbTags trace.DBTags, tags map[string]interfac
 func TestHTTPTags_Apply(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.HTTPTags
+		tags otexts.HTTPTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.HTTPTags{
+			tags: otexts.HTTPTags{
 				Method:     http.MethodGet,
 				URL:        "http://example.com/",
 				StatusCode: http.StatusOK,
@@ -255,11 +255,11 @@ func TestHTTPTags_Apply(t *testing.T) {
 func TestSetHTTPTags(t *testing.T) {
 	tt := []struct {
 		name string
-		tags trace.HTTPTags
+		tags otexts.HTTPTags
 	}{
 		{
 			name: "all tags",
-			tags: trace.HTTPTags{
+			tags: otexts.HTTPTags{
 				Method:     http.MethodGet,
 				URL:        "http://example.com/",
 				StatusCode: http.StatusOK,
@@ -269,14 +269,14 @@ func TestSetHTTPTags(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.SetHTTPTags(span, tc.tags)
+			otexts.SetHTTPTags(span, tc.tags)
 			span.Finish()
 			ensureHTTPTagsSet(t, tc.tags, span.Tags())
 		})
 	}
 }
 
-func ensureHTTPTagsSet(t *testing.T, httpTags trace.HTTPTags, tags map[string]interface{}) {
+func ensureHTTPTagsSet(t *testing.T, httpTags otexts.HTTPTags, tags map[string]interface{}) {
 	key := string(ext.HTTPMethod)
 	httpMethod, ok := tags[key]
 	switch {

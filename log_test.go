@@ -9,7 +9,7 @@ import (
 	"github.com/opentracing/opentracing-go/mocktracer"
 	"github.com/pkg/errors"
 
-	"github.com/code-willing/trace"
+	otexts "github.com/code-willing/opentracing-exts"
 )
 
 func init() {
@@ -29,7 +29,7 @@ func TestLogError(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.LogError(span, tc.err)
+			otexts.LogError(span, tc.err)
 			span.Finish()
 
 			if span.Tag(string(ext.Error)) == nil {
@@ -45,15 +45,15 @@ func TestLogError(t *testing.T) {
 			}
 			for _, field := range logFields {
 				switch field.Key {
-				case trace.LogFieldEvent:
-					if got, want := field.ValueString, trace.LogEventError; got != want {
+				case otexts.LogFieldEvent:
+					if got, want := field.ValueString, otexts.LogEventError; got != want {
 						t.Errorf("log field: event: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldErrorKind:
+				case otexts.LogFieldErrorKind:
 					if got, want := field.ValueString, fmt.Sprintf("%T", errors.Cause(tc.err)); got != want {
 						t.Errorf("log field: error.kind: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldMessage:
+				case otexts.LogFieldMessage:
 					if got, want := field.ValueString, tc.err.Error(); got != want {
 						t.Errorf("log field: message: got %q, want %q\n", got, want)
 					}
@@ -80,7 +80,7 @@ func TestLogErrorf(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.LogErrorf(span, tc.err, tc.format, tc.args...)
+			otexts.LogErrorf(span, tc.err, tc.format, tc.args...)
 			span.Finish()
 
 			if span.Tag(string(ext.Error)) == nil {
@@ -96,15 +96,15 @@ func TestLogErrorf(t *testing.T) {
 			}
 			for _, field := range logFields {
 				switch field.Key {
-				case trace.LogFieldEvent:
-					if got, want := field.ValueString, trace.LogEventError; got != want {
+				case otexts.LogFieldEvent:
+					if got, want := field.ValueString, otexts.LogEventError; got != want {
 						t.Errorf("log field: event: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldErrorKind:
+				case otexts.LogFieldErrorKind:
 					if got, want := field.ValueString, fmt.Sprintf("%T", errors.Cause(tc.err)); got != want {
 						t.Errorf("log field: error.kind: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldMessage:
+				case otexts.LogFieldMessage:
 					errMsg := errors.Wrapf(tc.err, tc.format, tc.args...).Error()
 					if got, want := field.ValueString, errMsg; got != want {
 						t.Errorf("log field: message: got %q, want %q\n", got, want)
@@ -132,7 +132,7 @@ func TestLogErrorWithFields(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			span := opentracing.StartSpan("test").(*mocktracer.MockSpan)
-			trace.LogErrorWithFields(span, tc.err, tc.fields)
+			otexts.LogErrorWithFields(span, tc.err, tc.fields)
 			span.Finish()
 
 			if span.Tag(string(ext.Error)) == nil {
@@ -148,15 +148,15 @@ func TestLogErrorWithFields(t *testing.T) {
 			}
 			for _, field := range logFields {
 				switch field.Key {
-				case trace.LogFieldEvent:
-					if got, want := field.ValueString, trace.LogEventError; got != want {
+				case otexts.LogFieldEvent:
+					if got, want := field.ValueString, otexts.LogEventError; got != want {
 						t.Errorf("log field: event: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldErrorKind:
+				case otexts.LogFieldErrorKind:
 					if got, want := field.ValueString, fmt.Sprintf("%T", errors.Cause(tc.err)); got != want {
 						t.Errorf("log field: error.kind: got %q, want %q\n", got, want)
 					}
-				case trace.LogFieldMessage:
+				case otexts.LogFieldMessage:
 					if got, want := field.ValueString, tc.err.Error(); got != want {
 						t.Errorf("log field: message: got %q, want %q\n", got, want)
 					}

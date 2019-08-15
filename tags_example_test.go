@@ -7,12 +7,12 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 
-	"github.com/code-willing/trace"
+	otexts "github.com/code-willing/opentracing-exts"
 )
 
 func ExampleRPCTags_client() {
 	// Start a new span with RPC client tags set.
-	span := opentracing.StartSpan("name", trace.RPCTags{
+	span := opentracing.StartSpan("name", otexts.RPCTags{
 		Kind:        ext.SpanKindRPCClientEnum,
 		PeerAddr:    "http://service.name.io/",
 		PeerService: "service",
@@ -22,7 +22,7 @@ func ExampleRPCTags_client() {
 
 func ExampleRPCTags_server() {
 	// Start a new span with RPC server tags set.
-	span := opentracing.StartSpan("name", trace.RPCTags{
+	span := opentracing.StartSpan("name", otexts.RPCTags{
 		Kind:        ext.SpanKindRPCServerEnum,
 		PeerAddr:    "http://service.name.io/",
 		PeerService: "service",
@@ -34,7 +34,7 @@ func ExampleRPCTags_server() {
 
 func ExampleDBTags_sql() {
 	// Start a new span with database client tags set.
-	span := opentracing.StartSpan("name", trace.DBTags{
+	span := opentracing.StartSpan("name", otexts.DBTags{
 		Type:      "sql",
 		Instance:  "test",
 		User:      "username",
@@ -45,7 +45,7 @@ func ExampleDBTags_sql() {
 
 func ExampleDBTags_nosql() {
 	// Start a new span with database client tags set.
-	span := opentracing.StartSpan("name", trace.DBTags{
+	span := opentracing.StartSpan("name", otexts.DBTags{
 		Type:      "redis",
 		Instance:  "test",
 		User:      "username",
@@ -56,7 +56,7 @@ func ExampleDBTags_nosql() {
 
 func ExampleHTTPTags() {
 	// Start a new span with HTTP tags set.
-	span := opentracing.StartSpan("name", trace.HTTPTags{
+	span := opentracing.StartSpan("name", otexts.HTTPTags{
 		Method:     http.MethodGet,
 		URL:        "http://example.com/test?foo=bar",
 		StatusCode: http.StatusOK,
