@@ -53,7 +53,7 @@ func LogError(span opentracing.Span, err error) {
 	)
 }
 
-// LogError logs an error with the specified format for an opentracing span,
+// LogErrorf logs an error with the specified format for an opentracing span,
 // setting the standard error tags and log fields.
 func LogErrorf(span opentracing.Span, err error, format string, args ...interface{}) {
 	if span == nil || err == nil {
